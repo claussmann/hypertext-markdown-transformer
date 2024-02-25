@@ -87,7 +87,9 @@ class HTMT_Parser(HTMLParser):
         # that the tag sequence ends here for handle_data function.
         # We also add a new line in some cases to mark the end of the
         # section also in the markdown.
-        if tag in ["p", "div"]:
+        if tag in ["p", "h1", "h2", "h3", "h4", "h5"]:
+            if self.md[-1] == " ":
+                self.md = self.md.strip()
             self.md += "\n"
         self.stack.pop()
         self.attr_stack.pop()
@@ -107,6 +109,7 @@ class HTMT_Parser(HTMLParser):
         attr = self.attr_stack[-1]
         if tag not in self.supported_tags:
             return
+
         # We put everything in one line and strip whitespaces (often due to format in HTML)
         data_lines = data.split("\n")
         data = ""
@@ -114,6 +117,9 @@ class HTMT_Parser(HTMLParser):
             line = line.strip()
             if line not in ["", "\n"]:
                 data += line + " "
+        data = data.strip() # remove trailing whitespace.
+
+        # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
             case "p":
@@ -127,6 +133,6 @@ class HTMT_Parser(HTMLParser):
             case "a":
                 for k,v in attr:
                     if k == "href":
-                        self.md += "[%s](%s)" % (data, v)
+                        self.md += " [%s](%s) " % (data, v)
                         return
-                self.md += data
+                self.md += " %s " % data
