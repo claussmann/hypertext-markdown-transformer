@@ -13,7 +13,10 @@ html1 = """<html>
         <hr>
         <p>Foo<br/>Bar</p>
         <img src="/foo/bar"/>
-        <a href="https:///bar/foo">My Link</a>
+        <p>
+            Please see <a href="https://bar/foo">My Link</a> for details.
+            Note, there are also <a>defective links.</a>
+        </p>
         <h2>This is a secondary title</h2>
         <p>Second paragraph</p>
         </div>
@@ -21,8 +24,7 @@ html1 = """<html>
 </html>
 """
 
-makrdown1 = """
-# My Title
+makrdown1 = """# My Title
 
 ***
 Foo
@@ -30,6 +32,7 @@ Foo
 Bar
 
 (image available in original ressource)
+Please see [My Link](https://bar/foo) for details. Note, there are also defective links.
 
 ## This is a secondary title
 Second paragraph
