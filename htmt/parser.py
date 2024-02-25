@@ -85,9 +85,9 @@ class HTMT_Parser(HTMLParser):
 
         # The default case: We take the tag from the stack to mark
         # that the tag sequence ends here for handle_data function.
-        # We also add a new line to mark the end of the section
-        # also in the markdown.
-        if tag in self.supported_tags:
+        # We also add a new line in some cases to mark the end of the
+        # section also in the markdown.
+        if tag in ["p", "div"]:
             self.md += "\n"
         self.stack.pop()
         self.attr_stack.pop()
@@ -107,18 +107,22 @@ class HTMT_Parser(HTMLParser):
         attr = self.attr_stack[-1]
         if tag not in self.supported_tags:
             return
+        # We put everything in one line and strip whitespaces (often due to format in HTML)
+        data_lines = data.split("\n")
+        data = ""
+        for line in data_lines:
+            line = line.strip()
+            if line not in ["", "\n"]:
+                data += line + " "
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
             case "p":
                 self.md += data
             case "h1":
-                data = data.replace("\n","")
                 self.md += "\n# " + data
             case "h2":
-                data = data.replace("\n","")
                 self.md += "\n## " + data
             case "h3" | "h4" | "h5":
-                data = data.replace("\n","")
                 self.md += "\n### " + data
             case "a":
                 for k,v in attr:
