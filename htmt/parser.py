@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 class HTMT_Parser(HTMLParser):
     def __init__(self, loglevel="INFO"):
         self.loglevel = loglevel
-        self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5"]
+        self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5", "a"]
         self.supported_startend_tags = ["br", "hr", "img"]
         self.skipped_tags = ["head", "script"]
         super().__init__()
@@ -27,6 +27,7 @@ class HTMT_Parser(HTMLParser):
     def markdownify(self, html: str) -> str:
         self.md = ""
         self.stack = ["BOTTOM"]
+        self.attr_stack = ["BOTTOM"]
         try:
             self.feed(html)
             self.close()
@@ -60,6 +61,7 @@ class HTMT_Parser(HTMLParser):
         # This is the default case: Put the tag on the stack s.t. the
         # handle_data function knows what to do.
         self.stack.append(tag)
+        self.attr_stack.append(attrs)
         self.debug(self.stack)
 
     def handle_endtag(self, tag):
@@ -88,6 +90,7 @@ class HTMT_Parser(HTMLParser):
         if tag in self.supported_tags:
             self.md += "\n"
         self.stack.pop()
+        self.attr_stack.pop()
         self.debug(self.stack)
 
     def handle_startendtag(self, tag, attrs):
@@ -101,6 +104,7 @@ class HTMT_Parser(HTMLParser):
 
     def handle_data(self, data):
         tag = self.stack[-1]
+        attr = self.attr_stack[-1]
         if tag not in self.supported_tags:
             return
         self.debug("For tag %s I got data: %s" % (tag, data))
@@ -116,3 +120,9 @@ class HTMT_Parser(HTMLParser):
             case "h3" | "h4" | "h5":
                 data = data.replace("\n","")
                 self.md += "\n### " + data
+            case "a":
+                for k,v in attr:
+                    if k == "href":
+                        self.md += "[%s](%s)" % (data, v)
+                        return
+                self.md += data
