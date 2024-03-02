@@ -16,6 +16,7 @@ html1 = """<html>
         <p>
             Please see <a href="https://bar/foo">My Link</a> for details.
             Note, there are also <a>defective links.</a>
+            We can <span>also add <i>some</i> spans</span> to the text.
         </p>
         <h2>This is a secondary title</h2>
         <p>
@@ -76,7 +77,7 @@ Bar
 
 (image available in original ressource)
 
-Please see [My Link](https://bar/foo) for details. Note, there are also defective links.
+Please see [My Link](https://bar/foo) for details. Note, there are also defective links. We can also add *some* spans to the text.
 
 ## This is a secondary title
 
@@ -92,7 +93,7 @@ Second paragraph *some italic text* **some bold text** *some **bold and italic**
 | Header 1 |Header 2 |Header 3 |Header 4 |
 | --- | --- | --- | --- |
 
-| Foo1 |Foo2 *with italic*text |Foo3 with paragraph |Foo4 and [a link in it](#)  |
+| Foo1 |Foo2 *with italic*text | Foo3 with paragraph |Foo4 and [a link in it](#)  |
 | --- | --- | --- | --- |
 
 

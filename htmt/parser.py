@@ -27,7 +27,7 @@ class HTMT_Parser(HTMLParser):
             print("[DEBUG] In HTMT_Parser: %s" % msg)
 
     def markdownify(self, html: str) -> str:
-        self.md = ""
+        self.md = "\n"
         self.stack = ["BOTTOM"]
         self.attr_stack = ["BOTTOM"]
         self.table_stack = [-1]
@@ -180,8 +180,13 @@ class HTMT_Parser(HTMLParser):
         # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
-            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li" | "th" | "td":
+            case "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li" | "th" | "td":
                 self.md += data
+            case "p" | "span":
+                if self.md[-1] not in [" ", "\n"] and len(data) > 0:
+                    self.md += " %s" % data
+                else:
+                    self.md += data
             case "a":
                 for k,v in attr:
                     if k == "href":
