@@ -82,6 +82,10 @@ class HTMT_Parser(HTMLParser):
                     self.md += "**"
                 else: # to handle <i><b>...</b></i> tags.
                     self.md += " **"
+            case "ol" | "ul":
+                self.md += "\n\n"
+            case "li":
+                self.md += "- "
 
         self.stack.append(tag)
         self.attr_stack.append(attrs)
@@ -110,7 +114,7 @@ class HTMT_Parser(HTMLParser):
         # that the tag sequence ends here for handle_data function.
         # We also add delimiters in the markdown to if needed.
         match tag:
-            case "p" | "h1" | "h2" | "h3" | "h4" | "h5":
+            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "li":
                 if self.md[-1] == " ":
                     self.md = self.md.strip()
                 self.md += "\n"
@@ -148,7 +152,7 @@ class HTMT_Parser(HTMLParser):
         # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
-            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i":
+            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li":
                 self.md += data
             case "a":
                 for k,v in attr:

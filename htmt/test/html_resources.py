@@ -25,6 +25,15 @@ html1 = """<html>
             <i>some <b>bold and italic</b>text</i>
             <b><i>Bold and italic</i></b>
             <i>two times</i><i>italic.</i>
+
+            <ul>
+                <li>And we have a list</li>
+                <li>With <b>some</b> items</li>
+            </ul>
+            <ol>
+                <li>And another list.</li>
+                <li>This is an <a href="foo.bar">ordered list</a> this time.</li>
+            </ol>
         </p>
         </div>
     </body>
@@ -46,4 +55,12 @@ Please see [My Link](https://bar/foo) for details. Note, there are also defectiv
 ## This is a secondary title
 
 Second paragraph *some italic text* **some bold text** *some **bold and italic**text* ***Bold and italic*** *two times* *italic.*
+
+- And we have a list
+- With **some**items
+
+
+- And another list.
+- This is an [ordered list](foo.bar) this time.
+
 """
