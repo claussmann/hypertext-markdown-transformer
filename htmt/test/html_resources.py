@@ -18,7 +18,14 @@ html1 = """<html>
             Note, there are also <a>defective links.</a>
         </p>
         <h2>This is a secondary title</h2>
-        <p>Second paragraph</p>
+        <p>
+            Second paragraph
+            <i>some italic text</i>
+            <b>some bold text</b>
+            <i>some <b>bold and italic</b>text</i>
+            <b><i>Bold and italic</i></b>
+            <i>two times</i><i>italic.</i>
+        </p>
         </div>
     </body>
 </html>
@@ -27,13 +34,16 @@ html1 = """<html>
 makrdown1 = """# My Title
 
 ***
+
 Foo
 
 Bar
 
 (image available in original ressource)
+
 Please see [My Link](https://bar/foo) for details. Note, there are also defective links.
 
 ## This is a secondary title
-Second paragraph
+
+Second paragraph *some italic text* **some bold text** *some **bold and italic**text* ***Bold and italic*** *two times* *italic.*
 """

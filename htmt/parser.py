@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 class HTMT_Parser(HTMLParser):
     def __init__(self, loglevel="INFO"):
         self.loglevel = loglevel
-        self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5", "a"]
+        self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5", "a", "b", "i"]
         self.supported_startend_tags = ["br", "hr", "img"]
         self.skipped_tags = ["head", "script"]
         super().__init__()
@@ -59,7 +59,28 @@ class HTMT_Parser(HTMLParser):
             return self.handle_startendtag(tag, attrs)
 
         # This is the default case: Put the tag on the stack s.t. the
-        # handle_data function knows what to do.
+        # handle_data function knows what to do, and set start tag in
+        # markdown if needed.
+        match tag:
+            case "h1":
+                self.md += "\n# "
+            case "h2":
+                self.md += "\n## "
+            case "h3" | "h4" | "h5":
+                self.md += "\n### "
+            case "p":
+                self.md += "\n"
+            case "i":
+                if stack_top == "b" and self.md[-1] == "*":
+                    self.md += "*"
+                else: # to handle <b><i>...</i></b> tags.
+                    self.md += " *"
+            case "b":
+                if stack_top == "i" and self.md[-1] == "*":
+                    self.md += "**"
+                else: # to handle <i><b>...</b></i> tags.
+                    self.md += " **"
+
         self.stack.append(tag)
         self.attr_stack.append(attrs)
         self.debug(self.stack)
@@ -85,12 +106,17 @@ class HTMT_Parser(HTMLParser):
 
         # The default case: We take the tag from the stack to mark
         # that the tag sequence ends here for handle_data function.
-        # We also add a new line in some cases to mark the end of the
-        # section also in the markdown.
-        if tag in ["p", "h1", "h2", "h3", "h4", "h5"]:
-            if self.md[-1] == " ":
-                self.md = self.md.strip()
-            self.md += "\n"
+        # We also add delimiters in the markdown to if needed.
+        match tag:
+            case "p" | "h1" | "h2" | "h3" | "h4" | "h5":
+                if self.md[-1] == " ":
+                    self.md = self.md.strip()
+                self.md += "\n"
+            case "i":
+                self.md += "*"
+            case "b":
+                self.md += "**"
+
         self.stack.pop()
         self.attr_stack.pop()
         self.debug(self.stack)
@@ -122,14 +148,8 @@ class HTMT_Parser(HTMLParser):
         # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
-            case "p":
+            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i":
                 self.md += data
-            case "h1":
-                self.md += "\n# " + data
-            case "h2":
-                self.md += "\n## " + data
-            case "h3" | "h4" | "h5":
-                self.md += "\n### " + data
             case "a":
                 for k,v in attr:
                     if k == "href":
