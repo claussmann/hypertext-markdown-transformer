@@ -6,7 +6,7 @@ class HTMT_Parser(HTMLParser):
         self.loglevel = loglevel
         self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5", "a", "b", "i"]
         self.supported_startend_tags = ["br", "hr", "img"]
-        self.skipped_tags = ["head", "script"]
+        self.skipped_tags = ["head", "script", "header", "footer"]
         super().__init__()
 
     def error(self, msg):
