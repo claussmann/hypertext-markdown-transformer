@@ -4,8 +4,10 @@ from html.parser import HTMLParser
 class HTMT_Parser(HTMLParser):
     def __init__(self, loglevel="INFO"):
         self.loglevel = loglevel
-        self.supported_tags = ["p", "h1", "h2", "h3", "h4", "h5", "a", "b", "i"]
-        self.supported_startend_tags = ["br", "hr", "img"]
+        # Not all of these are supported, but they are recognized as start-end-tags
+        # in HTML (otherwise the parser searches for missing end tags).
+        self.known_startend_tags = ["br", "hr", "img", "meta", "source", "link"]
+        # Everything within these tags is ignored.
         self.skipped_tags = ["head", "script", "header", "footer"]
         super().__init__()
 
@@ -52,7 +54,7 @@ class HTMT_Parser(HTMLParser):
         if stack_top.startswith("skip"):
             return
 
-        if tag in self.supported_startend_tags:
+        if tag in self.known_startend_tags:
             # In malformatted HTML tags like <br/> are sometimes
             # written as <br> which causes them to land in this
             # function, but causes errors since they have no end tag.
@@ -133,8 +135,6 @@ class HTMT_Parser(HTMLParser):
     def handle_data(self, data):
         tag = self.stack[-1]
         attr = self.attr_stack[-1]
-        if tag not in self.supported_tags:
-            return
 
         # We put everything in one line and strip whitespaces (often due to format in HTML)
         data_lines = data.split("\n")
