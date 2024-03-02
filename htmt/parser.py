@@ -162,11 +162,15 @@ class HTMT_Parser(HTMLParser):
                 if not self.is_table:
                     self.md += "\n***\n"
             case "img":
-                self.md += "\n(image available in original ressource)\n"
+                for k,v in attrs:
+                    if k == "src":
+                        self.md += " [image](%s) " % v
+                        return
+                self.md += " [image] "
 
     def handle_data(self, data):
         tag = self.stack[-1]
-        attr = self.attr_stack[-1]
+        attrs = self.attr_stack[-1]
 
         # We put everything in one line and strip whitespaces (often due to format in HTML)
         data_lines = data.split("\n")
@@ -188,7 +192,7 @@ class HTMT_Parser(HTMLParser):
                 else:
                     self.md += data
             case "a":
-                for k,v in attr:
+                for k,v in attrs:
                     if k == "href":
                         if data == "":
                             data = v

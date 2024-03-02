@@ -11,8 +11,7 @@ html1 = """<html>
         <div>
         <h1>My Title</h1>
         <hr>
-        <p>Foo<br/>Bar</p>
-        <img src="/foo/bar"/>
+        <p>Foo<br/>Bar <img src="/foo/bar"/> bla</p>
         <p>
             Please see <a href="https://bar/foo">My Link</a> for details.
             Note, there are also <a>defective links.</a>
@@ -73,9 +72,7 @@ makrdown1 = """# My Title
 
 Foo
 
-Bar
-
-(image available in original ressource)
+Bar [image](/foo/bar) bla
 
 Please see [My Link](https://bar/foo) for details. Note, there are also defective links. We can also add *some* spans to the text.
 
