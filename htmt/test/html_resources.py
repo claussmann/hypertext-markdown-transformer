@@ -35,7 +35,33 @@ html1 = """<html>
                 <li>This is an <a href="foo.bar">ordered list</a> this time.</li>
             </ol>
         </p>
+        <table>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+                <th>Header 3</th>
+                <th>Header 4</th>
+            </tr>
+            <tr>
+                <td>Foo1</td>
+                <td>Foo2 <i>with italic</i> text</td>
+                <td><p>Foo3 with paragraph</p></td>
+                <td>Foo4 and <a href="#">a link in it</a></td>
+            </tr>
+        </table>
         </div>
+        <table>
+            <tr>
+                <td>No header</td>
+                <td>Table has no header</td>
+                <td>There is no header.</td>
+            </tr>
+            <tr>
+                <td>Foo1</td>
+                <td>Foo2</td>
+                <td>Foo3</td>
+            </tr>
+        </table>
     </body>
 </html>
 """
@@ -62,5 +88,20 @@ Second paragraph *some italic text* **some bold text** *some **bold and italic**
 
 - And another list.
 - This is an [ordered list](foo.bar) this time.
+
+| Header 1 |Header 2 |Header 3 |Header 4 |
+| --- | --- | --- | --- |
+
+| Foo1 |Foo2 *with italic*text |Foo3 with paragraph |Foo4 and [a link in it](#)  |
+| --- | --- | --- | --- |
+
+
+
+| No header |Table has no header |There is no header. |
+| --- | --- | --- |
+
+| Foo1 |Foo2 |Foo3 |
+| --- | --- | --- |
+
 
 """

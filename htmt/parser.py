@@ -30,6 +30,8 @@ class HTMT_Parser(HTMLParser):
         self.md = ""
         self.stack = ["BOTTOM"]
         self.attr_stack = ["BOTTOM"]
+        self.table_stack = [-1]
+        self.is_table = False
         try:
             self.feed(html)
             self.close()
@@ -65,13 +67,17 @@ class HTMT_Parser(HTMLParser):
         # markdown if needed.
         match tag:
             case "h1":
-                self.md += "\n# "
+                if not self.is_table:
+                    self.md += "\n# "
             case "h2":
-                self.md += "\n## "
+                if not self.is_table:
+                    self.md += "\n## "
             case "h3" | "h4" | "h5":
-                self.md += "\n### "
+                if not self.is_table:
+                    self.md += "\n### "
             case "p":
-                self.md += "\n"
+                if not self.is_table:
+                    self.md += "\n"
             case "i":
                 if stack_top == "b" and self.md[-1] == "*":
                     self.md += "*"
@@ -86,6 +92,12 @@ class HTMT_Parser(HTMLParser):
                 self.md += "\n\n"
             case "li":
                 self.md += "- "
+            case "table":
+                self.md += "\n"
+                self.table_stack.append(0) # Record number of columns for underlining the header.
+                self.is_table = True # Prevent newlines within a table cell.
+            case "tr":
+                self.md += "| "
 
         self.stack.append(tag)
         self.attr_stack.append(attrs)
@@ -115,13 +127,27 @@ class HTMT_Parser(HTMLParser):
         # We also add delimiters in the markdown to if needed.
         match tag:
             case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "li":
-                if self.md[-1] == " ":
-                    self.md = self.md.strip()
-                self.md += "\n"
+                self.md = self.md.strip()
+                if not self.is_table:
+                    self.md += "\n"
             case "i":
                 self.md += "*"
             case "b":
                 self.md += "**"
+            case "table":
+                self.md += "\n"
+                self.table_stack.pop()
+                self.is_table = False
+            case "td" | "th":
+                self.md += " |"
+                self.table_stack[-1] += 1
+            case "tr":
+                self.md += "\n"
+                # We add one underline after every row. This is not perfectly markdown conform,
+                # however, most HTML tables have different number of columns in the rows. Thus,
+                # it would be malformatted otherwise.
+                self.md += ("| --- " * self.table_stack[-1]) + "|\n\n"
+                self.table_stack[-1] = 0
 
         self.stack.pop()
         self.attr_stack.pop()
@@ -130,9 +156,11 @@ class HTMT_Parser(HTMLParser):
     def handle_startendtag(self, tag, attrs):
         match tag:
             case "br":
-                self.md += "\n\n"
+                if not self.is_table:
+                    self.md += "\n\n"
             case "hr":
-                self.md += "\n***\n"
+                if not self.is_table:
+                    self.md += "\n***\n"
             case "img":
                 self.md += "\n(image available in original ressource)\n"
 
@@ -152,7 +180,7 @@ class HTMT_Parser(HTMLParser):
         # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
-            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li":
+            case "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li" | "th" | "td":
                 self.md += data
             case "a":
                 for k,v in attr:
