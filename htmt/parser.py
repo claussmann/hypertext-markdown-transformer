@@ -153,6 +153,8 @@ class HTMT_Parser(HTMLParser):
             case "a":
                 for k,v in attr:
                     if k == "href":
+                        if data == "":
+                            data = v
                         self.md += " [%s](%s) " % (data, v)
                         return
                 self.md += " %s " % data
