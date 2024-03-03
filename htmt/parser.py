@@ -78,13 +78,13 @@ class HTMT_Parser(HTMLParser):
             case "p":
                 if not self.is_table:
                     self.md += "\n"
-            case "i":
-                if stack_top == "b" and self.md[-1] == "*":
+            case "i" | "em":
+                if stack_top in ["b", "strong"] and self.md[-1] == "*":
                     self.md += "*"
                 else: # to handle <b><i>...</i></b> tags.
                     self.md += " *"
-            case "b":
-                if stack_top == "i" and self.md[-1] == "*":
+            case "b" | "strong":
+                if stack_top in ["i", "em"] and self.md[-1] == "*":
                     self.md += "**"
                 else: # to handle <i><b>...</b></i> tags.
                     self.md += " **"
@@ -130,9 +130,9 @@ class HTMT_Parser(HTMLParser):
                 self.md = self.md.strip()
                 if not self.is_table:
                     self.md += "\n"
-            case "i":
+            case "i" | "em":
                 self.md += "*"
-            case "b":
+            case "b" | "strong":
                 self.md += "**"
             case "table":
                 self.md += "\n"
@@ -184,7 +184,7 @@ class HTMT_Parser(HTMLParser):
         # We now decide what to do with the tag.
         self.debug("For tag %s I got data: %s" % (tag, data))
         match tag:
-            case "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "i" | "li" | "th" | "td":
+            case "h1" | "h2" | "h3" | "h4" | "h5" | "b" | "strong" | "i" | "em" | "li" | "th" | "td":
                 self.md += data
             case "p" | "span":
                 if self.md[-1] not in [" ", "\n"] and len(data) > 0:
