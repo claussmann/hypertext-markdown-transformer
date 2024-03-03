@@ -25,19 +25,19 @@ class HTMT_Parser(HTMLParser):
         super().__init__()
 
     def error(self, msg):
-        if self.loglevel == LogLevel.ERROR:
+        if self.loglevel != LogLevel.NO_LOGS:
             print("[ERROR] In HTMT_Parser: %s" % msg)
 
     def warn(self, msg):
-        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN]:
+        if self.loglevel in [LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG]:
             print("[WARN] In HTMT_Parser: %s" % msg)
 
     def info(self, msg):
-        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO]:
+        if self.loglevel in [LogLevel.INFO, LogLevel.DEBUG]:
             print("[INFO] In HTMT_Parser: %s" % msg)
 
     def debug(self, msg):
-        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG]:
+        if self.loglevel == LogLevel.DEBUG:
             print("[DEBUG] In HTMT_Parser: %s" % msg)
 
     def markdownify(self, html: str) -> str:
