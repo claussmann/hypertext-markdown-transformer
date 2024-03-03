@@ -173,7 +173,13 @@ html_links = """<html>
     </body>
 </html>
 """
-markdown_links = """[This is a link with text.](http://foo.bar) This is a link without text:
+markdown_links_ignore = """This is a link with text. This is a link without text:
+
+With in this link  **we have bold** parts. And...
+
+Finally, this link has no href .
+"""
+markdown_links_reference = """[This is a link with text.](http://foo.bar) This is a link without text:
 
 With in [this link](http://foo.bar)  **we have bold** [parts.](http://foo.bar) And...
 

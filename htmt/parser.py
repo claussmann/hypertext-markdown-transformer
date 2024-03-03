@@ -6,6 +6,10 @@ class ImageHandling(Enum):
     IGNORE = 1
     DESCRIBE = 2
 
+class LinkHandling(Enum):
+    REFERENCE = 0
+    IGNORE = 1
+
 class LogLevel(Enum):
     NO_LOGS = 0
     ERROR = 1
@@ -14,9 +18,13 @@ class LogLevel(Enum):
     DEBUG = 4
 
 class HTMT_Parser(HTMLParser):
-    def __init__(self, loglevel=LogLevel.WARN, imagehandling=ImageHandling.DESCRIBE):
+    def __init__(self,
+                loglevel=LogLevel.WARN,
+                imagehandling=ImageHandling.DESCRIBE,
+                linkhandling=LinkHandling.REFERENCE):
         self.loglevel = loglevel
         self.imagehandling = imagehandling
+        self.linkhandling = linkhandling
         # Not all of these are supported, but they are recognized as start-end-tags
         # in HTML (otherwise the parser searches for missing end tags).
         self.known_startend_tags = ["br", "hr", "img", "meta", "source", "link", "input"]
@@ -217,10 +225,14 @@ class HTMT_Parser(HTMLParser):
                 else:
                     self.md += data
             case "a":
-                for k,v in attrs:
-                    if k == "href":
-                        if data == "":
-                            data = v
-                        self.md += " [%s](%s) " % (data, v)
-                        return
-                self.md += " %s " % data
+                match self.linkhandling:
+                    case LinkHandling.REFERENCE:
+                        for k,v in attrs:
+                            if k == "href":
+                                if data == "":
+                                    data = v
+                                self.md += " [%s](%s) " % (data, v)
+                                return
+                        self.md += " %s " % data
+                    case LinkHandling.IGNORE:
+                        self.md += " %s " % data

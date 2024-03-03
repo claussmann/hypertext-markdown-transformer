@@ -23,9 +23,13 @@ def test_parser_tables():
     parser = HTMT_Parser(loglevel=LogLevel.NO_LOGS)
     assert parser.markdownify(html_tables) == markdown_tables
 
-def test_parser_links():
-    parser = HTMT_Parser(loglevel=LogLevel.NO_LOGS)
-    assert parser.markdownify(html_links) == markdown_links
+def test_parser_links_ignore():
+    parser = HTMT_Parser(loglevel=LogLevel.NO_LOGS, linkhandling=LinkHandling.IGNORE)
+    assert parser.markdownify(html_links) == markdown_links_ignore
+
+def test_parser_links_reference():
+    parser = HTMT_Parser(loglevel=LogLevel.NO_LOGS, linkhandling=LinkHandling.REFERENCE)
+    assert parser.markdownify(html_links) == markdown_links_reference
 
 def test_parser_images_ignore():
     parser = HTMT_Parser(loglevel=LogLevel.NO_LOGS, imagehandling=ImageHandling.IGNORE)
