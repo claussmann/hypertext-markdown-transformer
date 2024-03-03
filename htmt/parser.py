@@ -1,9 +1,18 @@
 from html.parser import HTMLParser
+from enum import Enum
 
+
+class LogLevel(Enum):
+    NO_LOGS = 0
+    ERROR = 1
+    WARN = 2
+    INFO = 3
+    DEBUG = 4
 
 class HTMT_Parser(HTMLParser):
-    def __init__(self, loglevel="INFO"):
+    def __init__(self, loglevel=LogLevel.WARN):
         self.loglevel = loglevel
+        self.imagehandling = imagehandling
         # Not all of these are supported, but they are recognized as start-end-tags
         # in HTML (otherwise the parser searches for missing end tags).
         self.known_startend_tags = ["br", "hr", "img", "meta", "source", "link", "input"]
@@ -12,18 +21,19 @@ class HTMT_Parser(HTMLParser):
         super().__init__()
 
     def error(self, msg):
-        print("[ERROR] In HTMT_Parser: %s" % msg)
+        if self.loglevel == LogLevel.ERROR:
+            print("[ERROR] In HTMT_Parser: %s" % msg)
 
     def warn(self, msg):
-        if self.loglevel in ["DEBUG", "INFO", "WARN"]:
+        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN]:
             print("[WARN] In HTMT_Parser: %s" % msg)
 
     def info(self, msg):
-        if self.loglevel in ["DEBUG", "INFO"]:
+        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO]:
             print("[INFO] In HTMT_Parser: %s" % msg)
 
     def debug(self, msg):
-        if self.loglevel in ["DEBUG"]:
+        if self.loglevel in [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG]:
             print("[DEBUG] In HTMT_Parser: %s" % msg)
 
     def markdownify(self, html: str) -> str:
