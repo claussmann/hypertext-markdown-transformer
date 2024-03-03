@@ -6,9 +6,9 @@ class HTMT_Parser(HTMLParser):
         self.loglevel = loglevel
         # Not all of these are supported, but they are recognized as start-end-tags
         # in HTML (otherwise the parser searches for missing end tags).
-        self.known_startend_tags = ["br", "hr", "img", "meta", "source", "link"]
+        self.known_startend_tags = ["br", "hr", "img", "meta", "source", "link", "input"]
         # Everything within these tags is ignored.
-        self.skipped_tags = ["head", "script", "header", "footer"]
+        self.skipped_tags = ["head", "script", "header", "footer", "form"]
         super().__init__()
 
     def error(self, msg):
