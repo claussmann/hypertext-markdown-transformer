@@ -1,6 +1,10 @@
 from html.parser import HTMLParser
 from enum import Enum
 
+class ImageHandling(Enum):
+    REFERENCE = 0
+    IGNORE = 1
+    DESCRIBE = 2
 
 class LogLevel(Enum):
     NO_LOGS = 0
@@ -10,7 +14,7 @@ class LogLevel(Enum):
     DEBUG = 4
 
 class HTMT_Parser(HTMLParser):
-    def __init__(self, loglevel=LogLevel.WARN):
+    def __init__(self, loglevel=LogLevel.WARN, imagehandling=ImageHandling.DESCRIBE):
         self.loglevel = loglevel
         self.imagehandling = imagehandling
         # Not all of these are supported, but they are recognized as start-end-tags
@@ -172,11 +176,22 @@ class HTMT_Parser(HTMLParser):
                 if not self.is_table:
                     self.md += "\n***\n"
             case "img":
-                for k,v in attrs:
-                    if k == "src":
-                        self.md += " [image](%s) " % v
-                        return
-                self.md += " [image] "
+                match self.imagehandling:
+                    case ImageHandling.REFERENCE:
+                        for k,v in attrs:
+                            if k == "src":
+                                self.md += " [image](%s) " % v
+                                return
+                        self.md += " [image] "
+                    case ImageHandling.IGNORE:
+                        self.md += " [image] "
+                    case ImageHandling.DESCRIBE:
+                        for k,v in attrs:
+                            if k == "src":
+                                img_name = v.split("/")[-1]
+                                self.md += " [image: %s) " % img_name
+                                return
+                        self.md += " [image: Unnamed] "
 
     def handle_data(self, data):
         tag = self.stack[-1]
