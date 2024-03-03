@@ -1,6 +1,6 @@
 # This workflow will install Python dependencies and run tests
 
-name: Pytest
+name: Pytest 3.11
 
 on:
   push:
@@ -30,4 +30,4 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        pytest htmt/test/ -vv
+        pytest test/ -vv
