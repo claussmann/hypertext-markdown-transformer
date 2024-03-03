@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "htmt"
+version = "1.0"
+authors = [
+  { name="Christian Laußmann"},
+]
+description = "Hyptertext Markdown Transformer transforms HTML documents to markdown."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = [
+    "Markdown",
+    "HTML",
+    "Utilities",
+    "Preprocessing",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/claussmann/hypertext-markdown-transformer"
+
+[tool.setuptools]
+packages = ['htmt',]
